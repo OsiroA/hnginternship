@@ -19,16 +19,17 @@ def hello():
         # Handle the case where latlng is empty
         return jsonify({"error": "Unable to determine latitude and longitude"}), 400
 
-    location = geo.city
-    link = f"https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&exclude=alerts&appid={APIkey}"
+    city = geo.city
+    link = f"http://api.openweathermap.org/data/2.5/weather?q={city}&APPID={APIkey}"
+
     try:
         response = requests.get(link)
         if response.status_code == 200:
             data = response.json()
             current_temp = data.get('current', {}).get('temp')
             if current_temp is not None:
-                greeting = f"Hello, {visitor_name}! The current temperature in {location} is {current_temp} degrees Celsius"
-                return jsonify({"client_ip": ip, "location": location, "greeting": greeting}), 200
+                greeting = f"Hello, {visitor_name}! The current temperature in {city} is {current_temp} degrees Celsius"
+                return jsonify({"client_ip": ip, "location": city, "greeting": greeting}), 200
             else:
                 return jsonify({"error": "Could not fetch weather data"}), 500
         else:
