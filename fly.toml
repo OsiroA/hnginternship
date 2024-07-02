@@ -1,8 +1,3 @@
-# fly.toml app configuration file generated for task1-morning-resonance-3986 on 2024-07-02T03:21:28-05:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
 app = "task1-morning-resonance-3986"
 primary_region = "lhr"
 
@@ -31,10 +26,18 @@ primary_region = "lhr"
     handlers = ["tls", "http"]
     port = 443
 
-  [[services.processes]]
-    command = "gunicorn -w 4 -b 0.0.0.0:8080 main:app"
+  [[services.http_checks]]
+    method = "GET"
+    path = "/"
+    interval = "10s"
+    timeout = "2s"
+    grace_period = "1m"
+    restart_limit = 0
 
 [[vm]]
   memory = "1gb"
   cpu_kind = "shared"
   cpus = 1
+
+[deploy]
+  command = "gunicorn -w 4 -b 0.0.0.0:8080 main:app"
